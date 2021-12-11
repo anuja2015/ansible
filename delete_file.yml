@@ -1,0 +1,14 @@
+---
+- name: This playbook is to delete a file or dir
+  hosts: all
+  become: true
+  tasks:
+  - name: delete a file
+    file:
+      path: /home/ansadmin/demofile
+      state: absent 
+  - name: delete a directory
+    file:
+      path: /home/ansadmin/dir1
+      state: absent 
+

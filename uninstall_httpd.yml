@@ -1,0 +1,14 @@
+---
+- name: This playbook is to uninstall package
+  hosts: webservers
+  become: true
+  tasks:
+  - name: Stop the service
+    service:
+      name: httpd
+      state: stopped
+
+  - name: Uninstall package
+    yum: 
+      name: httpd 
+      state: absent  

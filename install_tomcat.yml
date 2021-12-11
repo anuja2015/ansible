@@ -1,0 +1,37 @@
+---
+- name: This playbook installs Apache tomcat on managed nodes
+  hosts: all
+  become: true
+  tasks:
+    - name: Install Java on Rhel based nodes
+      yum:
+        name: java
+        state: installed
+      when: ansible_os_family == "RedHat"
+
+    - name: Install Java on Debian based nodes
+      apt:
+        name: default-jdk
+        state: present
+      when:  ansible_os_family == "Debian"
+
+    - name: Download the tar file from the url
+      get_url:
+        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.56/bin/apache-tomcat-9.0.56.tar.gz
+        dest: /opt
+
+    - name: Unzip the tar file
+      unarchive: 
+        src: /opt/apache-tomcat-9.0.56.tar.gz
+        dest: /opt
+        remote_src: true 
+
+    - name: CHange execution permission for start.sh
+      file:
+        path: /opt/apache-tomcat-9.0.56/bin/startup.sh
+        mode: 0777
+    
+    - name: Start tomcat service
+      shell: nohup ./startup.sh
+      args:
+        chdir: /opt/apache-tomcat-9.0.56/bin      

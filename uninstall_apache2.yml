@@ -1,0 +1,14 @@
+---
+- name: This playbook is to uninstall package
+  hosts: all 
+  become: true
+  tasks:
+  - name: Stop the service
+    service:
+      name: apache2 
+      state: stopped
+
+  - name: Uninstall package
+    apt: 
+      name: apache2 
+      state: absent  

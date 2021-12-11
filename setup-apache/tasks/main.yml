@@ -1,0 +1,41 @@
+---
+# tasks file for setup-apache
+- name: Install httpd
+  yum:
+    name: httpd
+    state: present
+  when: ansible_os_family == "RedHat"
+  notify: start httpd service
+
+- name: Install apache
+  apt:
+    name: apache2
+    state: present
+  when: ansible_os_family == "Debian"
+  notify:  Start Apache
+
+- name: Copy index.html to /var/www/html
+  copy:
+    src: /opt/ansible/index.html
+    dest: /var/www/html
+    mode: 0666
+
+- name: Change the port to be listened to {{ port }}
+  lineinfile:
+    path: /etc/httpd/conf/httpd.conf
+    regexp: '^Listen '
+    insertafter: '^#Listen '
+    line: 'Listen {{ port }}'
+  when: ansible_os_family == "RedHat"
+  notify: Restart httpd
+
+- name: Change the port to be listened to {{ port }} in Ubuntu
+  lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: '^Listen '
+    insertafter: '# /etc/apache2/sites-enabled/000-default.conf'
+    line: 'Listen {{ port }}'
+  when: ansible_os_family == "Debian"
+  notify: Restart apache2
+      
+
